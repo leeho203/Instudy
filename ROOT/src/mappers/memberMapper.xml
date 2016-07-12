@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.project.mapper.MemberMapper">
+	<insert id="insertMember">
+		insert into member(userid, userpw, username, email, nickname)
+		values(#{userid}, #{userpw}, #{username}, #{email}, #{nickname})
+	</insert>
+
+	<select id="selectMember" resultType="com.project.domain.MemberVO">
+		select * from member where userid=#{userid} and userpw=#{userpw}
+	</select>
+	
+	<update id="updateMember">
+		update member set userpw=#{userpw}, email=#{email}, nickname=#{nickname}
+		where userid=#{userid}
+	</update>
+
+</mapper>

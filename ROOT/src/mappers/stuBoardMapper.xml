@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.project.mapper.StuBoardMapper">
+	<insert id="insertBoard">
+		insert into board_stu(title, content, writer)
+		values(#{title}, #{content}, #{writer})
+	</insert>
+	
+	<delete id="deleteBoard">
+		delete from board_stu where bno=#{bno}
+	</delete>
+	
+	<select id="selectBoard" resultType="com.project.domain.BoardVO">
+		select * from board_stu where bno=#{bno}
+	</select>
+	
+	<select id="selectBoardAll" resultType="com.project.domain.BoardVO">
+		<![CDATA[
+		select * from board_stu where bno>0
+		order by bno desc, regdate desc
+		]]>
+	</select>
+	
+	<select id="selectBoardPage" resultType="com.project.domain.BoardVO">
+		<![CDATA[
+		select * from board_stu where bno>0
+		order by bno desc, regdate desc
+		limit #{startNum}, #{perPageNum}
+		]]>
+	</select>
+	
+	<select id="totalRecordCount" resultType="int">
+		select count(*) from board_stu where bno>0
+	</select>
+	
+	<select id="selectSearchBoardPage" resultType="com.project.domain.BoardVO">
+		<![CDATA[
+		select * from board_stu where bno>0
+		]]>
+		
+		<include refid="search"></include>
+		
+		<![CDATA[
+		order by bno desc, regdate desc
+		limit #{startNum}, #{perPageNum}
+		]]>
+	</select>
+	
+	<select id="searchRecordCount" resultType="int">		
+		<![CDATA[
+		select count(*) from board_stu where bno>0
+		]]>
+		<include refid="search"></include>
+	</select>
+	
+	<update id="updateBoard">
+		update board_stu set title=#{title}, content=#{content}, moddate=now()
+		where bno=#{bno}
+	</update>
+	
+	<update id="updateReplyCnt">
+		update board_stu set replycnt=replycnt+#{amount} where bno=#{bno}
+	</update>
+	
+	<update id="updateViewCnt">
+		update board_stu set viewcnt=viewcnt+1 where bno=#{bno}
+	</update>
+	
+	<select id="selectBestBoardPage" resultType="com.project.domain.BoardVO">
+		<![CDATA[
+			select * from board_stu
+			where regdate between subdate(now(), interval 1 week) and now()
+			order by viewcnt desc
+			limit #{startNum}, #{perPageNum}
+		]]>
+	</select>
+	
+	<sql id="search">
+		<if test="searchType!=null">
+			<if test="searchType=='t'.toString()">
+				and title like CONCAT('%', #{keyword}, '%')
+			</if>
+			
+			<if test="searchType=='c'.toString()">
+				and content like CONCAT('%', #{keyword}, '%')
+			</if>
+			
+			<if test="searchType=='w'.toString()">
+				and writer like CONCAT('%', #{keyword}, '%')
+			</if>
+			
+			<if test="searchType=='tcw'.toString()">
+				and (title like CONCAT('%', #{keyword}, '%')
+					OR content like CONCAT('%', #{keyword}, '%')
+					OR writer like CONCAT('%', #{keyword}, '%')
+				)
+			</if>
+		</if>
+	</sql>
+	
+
+</mapper>

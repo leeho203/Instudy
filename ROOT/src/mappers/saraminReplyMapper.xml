@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.project.mapper.SaraminReplyMapper">
+	<insert id="insertReply">
+		insert into reply_saramin(bno, replytext, replyer)
+		values(#{bno}, #{replytext}, #{replyer})
+	</insert>
+
+	<delete id="deleteReply">
+		delete from reply_saramin where rno=#{rno}
+	</delete>
+	
+	<select id="selectReply" resultType="com.project.domain.ReplyVO">
+		select * from reply_saramin where rno=#{rno}
+	</select>
+	
+	<select id="selectReplyAll" resultType="com.project.domain.ReplyVO">
+		select * from reply_saramin where bno=#{bno}
+		order by rno desc
+	</select>
+	
+	<select id="selectReplyPage" resultType="com.project.domain.ReplyVO">
+		select * from reply_saramin where bno=#{bno}
+		order by rno desc
+		limit #{pageVO.startNum}, #{pageVO.perPageNum}
+	</select>
+	
+	<select id="totalReplyCount" resultType="int">
+		select count(*) from reply_saramin where bno=#{bno}
+	</select>
+
+	<update id="updateReply">
+		update reply_saramin set replytext=#{replytext}, moddate=now()
+		where rno=#{rno}
+	</update>
+	
+	<select id="getBno" resultType="int">
+		select bno from reply_saramin where rno=#{rno}
+	</select>
+
+</mapper>

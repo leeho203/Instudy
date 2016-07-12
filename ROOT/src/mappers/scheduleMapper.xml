@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.project.mapper.ScheduleMapper">
+	<insert id="insertSchedule">
+		insert into schedule(title, writer, color, allday, startdate, enddate)
+		values(#{title}, #{writer}, #{color}, #{allday}, #{startdate}, #{enddate})
+	</insert>
+
+	<select id="getRecentSno" resultType="int">
+		select sno from schedule order by sno desc limit 1
+	</select>
+
+	<delete id="deleteSchedule">
+		delete from schedule where sno=#{sno}
+	</delete>
+
+	<select id="selectScheduleAll" resultType="com.project.domain.ScheduleVO">
+		select * from schedule where writer=#{writer}
+	</select>
+	
+	<update id="updateSchedule">
+		update schedule set title=#{title}, color=#{color}, allday=#{allday}, startdate=#{startdate}, enddate=#{enddate}
+		where sno=#{sno}
+	</update>
+
+</mapper>

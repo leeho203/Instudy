@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.project.mapper.TblSaraminMapper">
+	<insert id="insertBoard">
+		insert into tbl_saramin(id, url, active,
+		posting, modification, opening, expiration,
+		closeType, companyName, companyNameHref,
+		positionTitle, positionLocation, positionJobType,
+		positionIndustry, positionJobCategory, positionOpenQuantity,
+		positionExperienceLevel, positionRequiredEducationLevel,
+		keyword, salary, content)
+		values(#{id}, #{url}, #{active},
+		#{posting}, #{modification}, #{opening}, #{expiration},
+		#{closeType}, #{companyName}, #{companyNameHref},
+		#{positionTitle}, #{positionLocation}, #{positionJobType},
+		#{positionIndustry}, #{positionJobCategory}, #{positionOpenQuantity},
+		#{positionExperienceLevel}, #{positionRequiredEducationLevel},
+		#{keyword}, #{salary}, #{content})
+	</insert>
+	
+	<select id="getLastDate" resultType="java.util.Date">
+		select posting from tbl_saramin order by posting DESC limit 0, 1
+	</select>
+
+	<delete id="deleteBoard">
+		delete from tbl_saramin where id=#{id}
+	</delete>
+	
+	<select id="selectBoard" resultType="com.project.domain.SaraminVO">
+		select * from tbl_saramin where id=#{id}
+	</select>
+	
+	<select id="selectBoardPage" resultType="com.project.domain.SaraminVO">
+		<![CDATA[
+		select * from tbl_saramin where id>0
+		order by posting desc
+		limit #{startNum}, #{perPageNum}
+		]]>
+	</select>
+	
+	<select id="totalRecordCount" resultType="int">
+		select count(*) from tbl_saramin where id>0
+	</select>
+	
+	<select id="selectSearchBoardPage" resultType="com.project.domain.SaraminVO">
+		<![CDATA[
+		select * from tbl_saramin where id>0
+		]]>
+		
+		<include refid="search"></include>
+		
+		<![CDATA[
+		order by posting desc
+		limit #{startNum}, #{perPageNum}
+		]]>
+	</select>
+	
+	<select id="searchRecordCount" resultType="int">		
+		<![CDATA[
+		select count(*) from tbl_saramin where id>0
+		]]>
+		<include refid="search"></include>
+	</select>
+	
+	<update id="updateReplyCnt">
+		update tbl_saramin set replycnt=replycnt+#{amount} where id=#{id}
+	</update>
+	
+	<update id="updateViewCnt">
+		update tbl_saramin set viewcnt=viewcnt+1 where id=#{id}
+	</update>
+	
+	<update id="updateContent">
+		update tbl_saramin set content=#{content}
+	</update>
+	
+	<select id="selectBestBoardPage" resultType="com.project.domain.SaraminVO">
+		<![CDATA[
+		select * from tbl_saramin
+		where posting between subdate(now(), interval 1 week) and now()
+		order by viewcnt desc
+		limit #{startNum}, #{perPageNum}
+		]]>
+	</select>
+	
+	<sql id="search">
+		<if test="searchType!=null">
+			<if test="searchType=='t'.toString()">
+				and positionTitle like CONCAT('%', #{keyword}, '%')
+			</if>
+			
+			<if test="searchType=='c'.toString()">
+				and companyName like CONCAT('%', #{keyword}, '%')
+			</if>
+			
+			<if test="searchType=='w'.toString()">
+				and keyword like CONCAT('%', #{keyword}, '%')
+			</if>
+			
+			<if test="searchType=='tcw'.toString()">
+				and (positionTitle like CONCAT('%', #{keyword}, '%')
+					OR companyName like CONCAT('%', #{keyword}, '%')
+					OR keyword like CONCAT('%', #{keyword}, '%')
+				)
+			</if>
+		</if>
+	</sql>
+	
+	
+</mapper>
